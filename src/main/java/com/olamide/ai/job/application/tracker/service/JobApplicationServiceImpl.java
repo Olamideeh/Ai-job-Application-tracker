@@ -4,6 +4,7 @@ import com.olamide.ai.job.application.tracker.dto.JobApplicationRequestDto;
 import com.olamide.ai.job.application.tracker.dto.JobApplicationResponseDto;
 import com.olamide.ai.job.application.tracker.entity.JobApplication;
 import com.olamide.ai.job.application.tracker.entity.User;
+import com.olamide.ai.job.application.tracker.enums.ApplicationStatus;
 import com.olamide.ai.job.application.tracker.repository.JobApplicationRepository;
 import com.olamide.ai.job.application.tracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -205,5 +206,49 @@ public class JobApplicationServiceImpl implements JobApplicationService {
                         );
 
         jobApplicationRepository.delete(application);
+    }
+
+    @Override
+    public JobApplicationResponseDto updateStatus(
+            Long id,
+            ApplicationStatus status
+    ) {
+
+        Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        String email = authentication.getName();
+
+        JobApplication application =
+                jobApplicationRepository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Application not found with id: " + id
+                                )
+                        );
+
+        if (!application.getUser().getEmail().equals(email)) {
+            throw new RuntimeException(
+                    "You are not authorized to access this application"
+            );
+        }
+
+        application.setStatus(status);
+
+        JobApplication savedApplication =
+                jobApplicationRepository.save(application);
+
+        return new JobApplicationResponseDto(
+                savedApplication.getId(),
+                savedApplication.getCompanyName(),
+                savedApplication.getJobTitle(),
+                savedApplication.getLocation(),
+                savedApplication.getJobUrl(),
+                savedApplication.getStatus(),
+                savedApplication.getApplicationDate(),
+                savedApplication.getNotes()
+        );
     }
 }
