@@ -5,6 +5,8 @@ import com.olamide.ai.job.application.tracker.enums.ApplicationStatus;
 import com.olamide.ai.job.application.tracker.service.JobApplicationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +28,8 @@ public class JobApplicationController {
     }
 
     @GetMapping
-    public List<JobApplicationResponseDto> getAllApplications() {
-        return jobApplicationService.getAll();
+    public Page<JobApplicationResponseDto> getAllApplications(Pageable pageable) {
+        return jobApplicationService.getAll(pageable);
     }
 
     @GetMapping("/my-applications")

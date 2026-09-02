@@ -13,4 +13,14 @@ public class GlobalExceptionHandler {
     public String handleApplicationNotFound(ApplicationNotFoundException exception) {
         return exception.getMessage();
     }
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleUserNotFound(UserNotFoundException exception) {
+        return exception.getMessage();
+    }
+    @ExceptionHandler(UnathorizedException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleUnathorizedException(UnathorizedException exception) {
+        return exception.getMessage();
+    }
 }

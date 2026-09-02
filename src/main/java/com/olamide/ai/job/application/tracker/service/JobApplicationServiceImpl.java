@@ -9,6 +9,8 @@ import com.olamide.ai.job.application.tracker.exception.ApplicationNotFoundExcep
 import com.olamide.ai.job.application.tracker.repository.JobApplicationRepository;
 import com.olamide.ai.job.application.tracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -66,20 +68,13 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         );
     }
     @Override
-    public List<JobApplicationResponseDto> getAll() {
+    public Page<JobApplicationResponseDto> getAll(Pageable pageable) {
 
-        Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
+        Page<JobApplication> applications =
+                jobApplicationRepository.findAll(pageable);
 
-        String email = authentication.getName();
-
-        List<JobApplication> applications =
-                jobApplicationRepository.findByUserEmail(email);
-
-        return applications.stream()
-                .map(application -> new JobApplicationResponseDto(
+        return applications.map(application ->
+                new JobApplicationResponseDto(
                         application.getId(),
                         application.getCompanyName(),
                         application.getJobTitle(),
@@ -88,8 +83,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
                         application.getStatus(),
                         application.getApplicationDate(),
                         application.getNotes()
-                ))
-                .toList();
+                )
+        );
     }
 
     @Override
@@ -238,6 +233,28 @@ public class JobApplicationServiceImpl implements JobApplicationService {
                 savedApplication.getStatus(),
                 savedApplication.getApplicationDate(),
                 savedApplication.getNotes()
+        );
+    }
+
+    @Override
+    public Page<JobApplicationResponseDto> findByStatus(
+            ApplicationStatus status,
+            Pageable pageable
+    ) {
+        Page<JobApplication> applications =
+                jobApplicationRepository.findByStatus(status, pageable);
+
+        return applications.map(application ->
+                new JobApplicationResponseDto(
+                        application.getId(),
+                        application.getCompanyName(),
+                        application.getJobTitle(),
+                        application.getLocation(),
+                        application.getJobUrl(),
+                        application.getStatus(),
+                        application.getApplicationDate(),
+                        application.getNotes()
+                )
         );
     }
 }
