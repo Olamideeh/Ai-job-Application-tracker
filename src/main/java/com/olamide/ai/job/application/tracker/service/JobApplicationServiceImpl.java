@@ -5,6 +5,7 @@ import com.olamide.ai.job.application.tracker.dto.JobApplicationResponseDto;
 import com.olamide.ai.job.application.tracker.entity.JobApplication;
 import com.olamide.ai.job.application.tracker.entity.User;
 import com.olamide.ai.job.application.tracker.enums.ApplicationStatus;
+import com.olamide.ai.job.application.tracker.exception.ApplicationNotFoundException;
 import com.olamide.ai.job.application.tracker.repository.JobApplicationRepository;
 import com.olamide.ai.job.application.tracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -131,10 +132,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         JobApplication application =
                 jobApplicationRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Application not found with id: " + id
-                                )
-                        );
+                                new ApplicationNotFoundException("Application not found"));
 
         if (!application.getUser().getEmail().equals(email)) {
             throw new RuntimeException(
@@ -165,10 +163,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         JobApplication application =
                 jobApplicationRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Application not found with id: " + id
-                                )
-                        );
+                                new ApplicationNotFoundException("Application not found"));
 
         application.setCompanyName(request.getCompanyName());
         application.setJobTitle(request.getJobTitle());
@@ -200,10 +195,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         JobApplication application =
                 jobApplicationRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Application not found with id: " + id
-                                )
-                        );
+                                new ApplicationNotFoundException("Application not found"));
 
         jobApplicationRepository.delete(application);
     }
@@ -224,13 +216,10 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         JobApplication application =
                 jobApplicationRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Application not found with id: " + id
-                                )
-                        );
+                                new ApplicationNotFoundException("Application not found"));
 
         if (!application.getUser().getEmail().equals(email)) {
-            throw new RuntimeException(
+            throw new ApplicationNotFoundException (
                     "You are not authorized to access this application"
             );
         }
