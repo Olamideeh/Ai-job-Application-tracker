@@ -1,5 +1,6 @@
 package com.olamide.ai.job.application.tracker.exception;
 
+import com.olamide.ai.job.application.tracker.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -10,17 +11,27 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApplicationNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleApplicationNotFound(ApplicationNotFoundException exception) {
-        return exception.getMessage();
+    public ApiResponse<Void> handleApplicationNotFound(
+            ApplicationNotFoundException exception
+    ) {
+
+        return new ApiResponse<>(
+                false,
+                exception.getMessage(),
+                null
+        );
     }
+
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleUserNotFound(UserNotFoundException exception) {
-        return exception.getMessage();
-    }
-    @ExceptionHandler(UnathorizedException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleUnathorizedException(UnathorizedException exception) {
-        return exception.getMessage();
+    public ApiResponse<Void> handleUserNotFound(
+            UserNotFoundException exception
+    ) {
+
+        return new ApiResponse<>(
+                false,
+                exception.getMessage(),
+                null
+        );
     }
 }

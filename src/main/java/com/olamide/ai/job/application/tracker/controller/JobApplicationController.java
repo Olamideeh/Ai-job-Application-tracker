@@ -1,7 +1,9 @@
 package com.olamide.ai.job.application.tracker.controller;
+
 import com.olamide.ai.job.application.tracker.dto.JobApplicationRequestDto;
 import com.olamide.ai.job.application.tracker.dto.JobApplicationResponseDto;
 import com.olamide.ai.job.application.tracker.enums.ApplicationStatus;
+import com.olamide.ai.job.application.tracker.response.ApiResponse;
 import com.olamide.ai.job.application.tracker.service.JobApplicationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,50 +23,138 @@ public class JobApplicationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public JobApplicationResponseDto createApplication(
+    public ApiResponse<JobApplicationResponseDto> createApplication(
             @Valid @RequestBody JobApplicationRequestDto request
     ) {
-        return jobApplicationService.createApplication(request);
+
+        JobApplicationResponseDto application =
+                jobApplicationService.createApplication(request);
+
+        return new ApiResponse<>(
+                true,
+                "Application created successfully",
+                application
+        );
     }
 
     @GetMapping
-    public Page<JobApplicationResponseDto> getAllApplications(Pageable pageable) {
-        return jobApplicationService.getAll(pageable);
+    public ApiResponse<Page<JobApplicationResponseDto>> getAllApplications(
+            Pageable pageable
+    ) {
+
+        Page<JobApplicationResponseDto> applications =
+                jobApplicationService.getAll(pageable);
+
+        return new ApiResponse<>(
+                true,
+                "Applications retrieved successfully",
+                applications
+        );
     }
 
     @GetMapping("/my-applications")
-    public List<JobApplicationResponseDto> findByEmail() {
-        return jobApplicationService.findByEmail();
+    public ApiResponse<List<JobApplicationResponseDto>> findByEmail() {
+
+        List<JobApplicationResponseDto> applications =
+                jobApplicationService.findByEmail();
+
+        return new ApiResponse<>(
+                true,
+                "Your applications retrieved successfully",
+                applications
+        );
     }
 
     @GetMapping("/{id}")
-    public JobApplicationResponseDto findApplicationById(
+    public ApiResponse<JobApplicationResponseDto> findApplicationById(
             @PathVariable Long id
     ) {
-        return jobApplicationService.getById(id);
+
+        JobApplicationResponseDto application =
+                jobApplicationService.getById(id);
+
+        return new ApiResponse<>(
+                true,
+                "Application retrieved successfully",
+                application
+        );
     }
 
     @PutMapping("/{id}")
-    public JobApplicationResponseDto updateApplication(
+    public ApiResponse<JobApplicationResponseDto> updateApplication(
             @PathVariable Long id,
             @Valid @RequestBody JobApplicationRequestDto request
     ) {
-        return jobApplicationService.update(id, request);
+
+        JobApplicationResponseDto application =
+                jobApplicationService.update(id, request);
+
+        return new ApiResponse<>(
+                true,
+                "Application updated successfully",
+                application
+        );
     }
 
     @PatchMapping("/{id}/status")
-    public JobApplicationResponseDto updateStatus(
+    public ApiResponse<JobApplicationResponseDto> updateStatus(
             @PathVariable Long id,
             @RequestParam ApplicationStatus status
     ) {
-        return jobApplicationService.updateStatus(id, status);
+
+        JobApplicationResponseDto application =
+                jobApplicationService.updateStatus(id, status);
+
+        return new ApiResponse<>(
+                true,
+                "Application status updated successfully",
+                application
+        );
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteApplication(
+    public ApiResponse<Void> deleteApplication(
             @PathVariable Long id
     ) {
+
         jobApplicationService.delete(id);
+
+        return new ApiResponse<>(
+                true,
+                "Application deleted successfully",
+                null
+        );
+    }
+
+    @GetMapping("/filter")
+    public ApiResponse<Page<JobApplicationResponseDto>> findByStatus(
+            @RequestParam ApplicationStatus status,
+            Pageable pageable
+    ) {
+
+        Page<JobApplicationResponseDto> applications =
+                jobApplicationService.findByStatus(status, pageable);
+
+        return new ApiResponse<>(
+                true,
+                "Applications filtered successfully",
+                applications
+        );
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<Page<JobApplicationResponseDto>> search(
+            @RequestParam String keyword,
+            Pageable pageable
+    ) {
+
+        Page<JobApplicationResponseDto> applications =
+                jobApplicationService.search(keyword, pageable);
+
+        return new ApiResponse<>(
+                true,
+                "Applications searched successfully",
+                applications
+        );
     }
 }

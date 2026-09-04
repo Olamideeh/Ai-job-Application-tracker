@@ -14,4 +14,10 @@ public interface JobApplicationRepository
     Page<JobApplication> findAll(Pageable pageable);
     List<JobApplication> findByUserEmail(String email);
     Page<JobApplication> findByStatus(ApplicationStatus status, Pageable pageable);
+    Page<JobApplication> findByCompanyNameContainingIgnoreCaseOrJobTitleContainingIgnoreCase(
+            String companyName,
+            String jobTitle,
+            Pageable pageable
+    );
+
 }

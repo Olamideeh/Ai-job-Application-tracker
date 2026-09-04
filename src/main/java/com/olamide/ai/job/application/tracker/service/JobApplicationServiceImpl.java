@@ -257,4 +257,30 @@ public class JobApplicationServiceImpl implements JobApplicationService {
                 )
         );
     }
+    @Override
+    public Page<JobApplicationResponseDto> search(
+            String keyword,
+            Pageable pageable
+    ) {
+        Page<JobApplication> applications =
+                jobApplicationRepository
+                        .findByCompanyNameContainingIgnoreCaseOrJobTitleContainingIgnoreCase(
+                                keyword,
+                                keyword,
+                                pageable
+                        );
+
+        return applications.map(application ->
+                new JobApplicationResponseDto(
+                        application.getId(),
+                        application.getCompanyName(),
+                        application.getJobTitle(),
+                        application.getLocation(),
+                        application.getJobUrl(),
+                        application.getStatus(),
+                        application.getApplicationDate(),
+                        application.getNotes()
+                )
+        );
+    }
 }

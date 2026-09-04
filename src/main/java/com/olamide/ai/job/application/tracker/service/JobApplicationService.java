@@ -32,4 +32,9 @@ public interface JobApplicationService {
             ApplicationStatus status
     );
     Page<JobApplicationResponseDto> findByStatus(ApplicationStatus status, Pageable pageable);
+
+    Page<JobApplicationResponseDto> search(
+            String keyword,
+            Pageable pageable
+    );
 }
