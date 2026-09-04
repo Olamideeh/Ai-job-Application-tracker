@@ -11,22 +11,29 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/applications")
 @RequiredArgsConstructor
+@Tag(
+        name = "Job Applications",
+        description = "Endpoints for managing job applications"
+)
 public class JobApplicationController {
 
     private final JobApplicationService jobApplicationService;
-
+    @Operation(
+            summary = "Create a job application",
+            description = "Creates a new job application for the authenticated user"
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<JobApplicationResponseDto> createApplication(
             @Valid @RequestBody JobApplicationRequestDto request
     ) {
-
         JobApplicationResponseDto application =
                 jobApplicationService.createApplication(request);
 
@@ -37,6 +44,10 @@ public class JobApplicationController {
         );
     }
 
+    @Operation(
+            summary = "Get all job applications",
+            description = "Returns a paginated list of job applications"
+    )
     @GetMapping
     public ApiResponse<Page<JobApplicationResponseDto>> getAllApplications(
             Pageable pageable
@@ -52,9 +63,12 @@ public class JobApplicationController {
         );
     }
 
+    @Operation(
+            summary = "Get my applications",
+            description = "Returns applications belonging to the authenticated user"
+    )
     @GetMapping("/my-applications")
     public ApiResponse<List<JobApplicationResponseDto>> findByEmail() {
-
         List<JobApplicationResponseDto> applications =
                 jobApplicationService.findByEmail();
 
@@ -65,6 +79,10 @@ public class JobApplicationController {
         );
     }
 
+    @Operation(
+            summary = "Get application by ID",
+            description = "Returns a single job application using its ID"
+    )
     @GetMapping("/{id}")
     public ApiResponse<JobApplicationResponseDto> findApplicationById(
             @PathVariable Long id
@@ -80,12 +98,15 @@ public class JobApplicationController {
         );
     }
 
+    @Operation(
+            summary = "Update a job application",
+            description = "Updates an existing job application"
+    )
     @PutMapping("/{id}")
     public ApiResponse<JobApplicationResponseDto> updateApplication(
             @PathVariable Long id,
             @Valid @RequestBody JobApplicationRequestDto request
     ) {
-
         JobApplicationResponseDto application =
                 jobApplicationService.update(id, request);
 
@@ -96,6 +117,10 @@ public class JobApplicationController {
         );
     }
 
+    @Operation(
+            summary = "Update application status",
+            description = "Changes the status of an existing job application"
+    )
     @PatchMapping("/{id}/status")
     public ApiResponse<JobApplicationResponseDto> updateStatus(
             @PathVariable Long id,
@@ -111,7 +136,10 @@ public class JobApplicationController {
                 application
         );
     }
-
+    @Operation(
+            summary = "Delete a job application",
+            description = "Deletes an existing job application"
+    )
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteApplication(
             @PathVariable Long id
@@ -126,6 +154,10 @@ public class JobApplicationController {
         );
     }
 
+    @Operation(
+            summary = "Filter applications by status",
+            description = "Returns applications matching the specified status"
+    )
     @GetMapping("/filter")
     public ApiResponse<Page<JobApplicationResponseDto>> findByStatus(
             @RequestParam ApplicationStatus status,
@@ -142,12 +174,15 @@ public class JobApplicationController {
         );
     }
 
+    @Operation(
+            summary = "Search job applications",
+            description = "Searches applications by company name or job title"
+    )
     @GetMapping("/search")
     public ApiResponse<Page<JobApplicationResponseDto>> search(
             @RequestParam String keyword,
             Pageable pageable
     ) {
-
         Page<JobApplicationResponseDto> applications =
                 jobApplicationService.search(keyword, pageable);
 
